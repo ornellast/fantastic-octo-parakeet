@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: product-catalog-service
+#  data:
+#    mongodb:
+#      database: product_catalog_database
+#      host: localhost
+#      port: 27017
+#      username: root
+#      password: "Even_h4rber-2-gu3sz!"
+#      authentication-database: admin
+#eureka:
+#  instance:
+#    hostname: ${vcap.application.uris[0]:localhost}
+#    non-secure-port: 80
+#    metadata-map:
+#      instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+#    lease-renewal-interval-in-seconds: 5
+#  client:
+#    region: default
+#    registry-fetch-interval-seconds: 5
+#    service-url:
+#      default-zone: ${vcap.services.pwa-eureka-service.credentials.uri}/eureka/
+
+server:
+  port: 8081

@@ -23,11 +23,9 @@ public abstract sealed class BaseEntity permits Ingredient, Product {
 
     @Column(name = "created_at", updatable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     @CreatedDate
-    @JsonProperty("created_at")
     Instant createdAt = null;
     @Column(name = "updated_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     @LastModifiedDate
-    @JsonProperty("updated_at")
     Instant updatedAt = null;
     @Version
     private Integer version;

@@ -1,6 +1,11 @@
 spring:
   application:
     name: product-catalog-service
+    kafka:
+        config:
+          partitions: 3
+          replicas: 1
+
   datasource:
     url: jdbc:postgresql://localhost:5432/ms_product_catalog
     username: ms_product_catalog_user
@@ -9,8 +14,11 @@ spring:
     hibernate:
       ddl-auto: validate
   flyway:
-      validate-migration-naming: true
-      enabled: true
+    validate-migration-naming: true
+    enabled: true
+  kafka:
+    bootstrap-servers: localhost:29092
+
 
 logging:
   level:
@@ -20,7 +28,7 @@ logging:
         type:
           descriptor:
             sql:
-             BasicBinder: TRACE
+              BasicBinder: TRACE
 
 eureka:
   instance:

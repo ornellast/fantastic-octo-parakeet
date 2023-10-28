@@ -13,7 +13,6 @@ public final class ProductIngredientConverter {
 
     public static ExternalProductIngredient toExternalProductIngredient(ProductIngredient productIngredient) {
         return new ExternalProductIngredient(
-            productIngredient.getProduct().getId(),
             productIngredient.getIngredient().getId(),
             productIngredient.getIngredient().getName(),
             productIngredient.getAmount()

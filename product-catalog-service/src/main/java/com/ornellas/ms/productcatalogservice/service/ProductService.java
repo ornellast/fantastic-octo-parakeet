@@ -2,6 +2,7 @@ package com.ornellas.ms.productcatalogservice.service;
 
 import com.ornellas.ms.productcatalogservice.converter.ProductConverter;
 import com.ornellas.ms.productcatalogservice.dto.ExternalProduct;
+import com.ornellas.ms.productcatalogservice.kafka.publisher.ProductPublisher;
 import com.ornellas.ms.productcatalogservice.model.Product;
 import com.ornellas.ms.productcatalogservice.repository.ProductRepository;
 import com.sun.jdi.request.InvalidRequestStateException;
@@ -20,9 +21,12 @@ public final class ProductService {
 
     private final IngredientService ingredientService;
 
-    public ProductService(ProductRepository repository, IngredientService ingredientService) {
+    private final ProductPublisher productPublisher;
+
+    public ProductService(ProductRepository repository, IngredientService ingredientService, ProductPublisher productPublisher) {
         this.repository = repository;
         this.ingredientService = ingredientService;
+        this.productPublisher = productPublisher;
     }
 
     public List<Product> findAll() {
@@ -42,7 +46,9 @@ public final class ProductService {
         }
         val managedEntity = optionalProduct.get();
         ProductConverter.fromExternalIntoManagedEntity(externalProduct, ingredientService, managedEntity);
-        return repository.save(managedEntity);
+        Product updatedEntity = repository.save(managedEntity);
+        productPublisher.publish(updatedEntity);
+        return updatedEntity;
     }
 
     public Optional<Product> findById(UUID id) {
@@ -54,6 +60,8 @@ public final class ProductService {
         if (product.getProductIngredientList().isEmpty()){
             throw new InvalidRequestStateException("The product has to have an ingredient list");
         }
-        return repository.save(product);
+        Product managedEntity = repository.save(product);
+        productPublisher.publish(managedEntity);
+        return managedEntity;
     }
 }

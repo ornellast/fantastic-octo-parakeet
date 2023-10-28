@@ -3,7 +3,8 @@ package com.ornellas.ms.productcatalogservice.controller;
 import com.ornellas.ms.productcatalogservice.converter.ProductConverter;
 import com.ornellas.ms.productcatalogservice.dto.ExternalProduct;
 import com.ornellas.ms.productcatalogservice.service.ProductService;
-import lombok.val;
+import com.sun.jdi.request.InvalidRequestStateException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,24 +30,33 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<List<ExternalProduct>> listAll() {
         return ResponseEntity.ok(
-                service.findAll()
+            service.findAll().stream().map(ProductConverter::toExternalProduct).toList()
         );
     }
 
     @PostMapping
     public ResponseEntity post(@RequestBody ExternalProduct dto) {
-        val be = ProductConverter.from(dto);
-        service.persistProduct(be);
-        return ResponseEntity.ok().build();
+        try {
+            service.persistProduct(dto);
+            return ResponseEntity.ok().build();
+
+        } catch (EntityNotFoundException ex) {
+            return ResponseEntity.badRequest().body("One or more ingredients has wrong id");
+        } catch (InvalidRequestStateException exception) {
+            return ResponseEntity.badRequest().body(exception.getMessage());
+        }
     }
 
     @PutMapping(path = "/{id}")
     public ResponseEntity put(@RequestBody ExternalProduct dto, @PathVariable("id") UUID id) {
-        val be = service.findById(id).get();
-        be.setName(dto.name());
-        be.setType(dto.type());
-        service.persistProduct(be);
-        return ResponseEntity.ok().build();
+        try {
+            service.updateProduct(dto, id);
+            return ResponseEntity.ok().build();
+        } catch (InvalidRequestStateException exception) {
+            return ResponseEntity.badRequest().body(exception.getMessage());
+        } catch (EntityNotFoundException exception) {
+            return ResponseEntity.notFound().build();
+        }
 
     }
 }

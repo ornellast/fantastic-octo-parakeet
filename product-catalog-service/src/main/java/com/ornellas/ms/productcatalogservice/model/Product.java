@@ -5,14 +5,17 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Collections;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -24,11 +27,19 @@ public final class Product extends BaseEntity {
     @Id
     @GeneratedValue
     private UUID id;
-
     @Column(nullable = false)
     private String name;
-
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ProductType type;
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    Set<ProductIngredient> productIngredientList;
+
+    public Set<ProductIngredient> getProductIngredientList() {
+        if(productIngredientList == null) {
+            return Set.of();
+        }
+        return Collections.unmodifiableSet(productIngredientList);
+    }
 }

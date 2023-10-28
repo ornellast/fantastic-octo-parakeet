@@ -7,7 +7,10 @@ spring:
     password: 'H4rd-2GuezS#PDS_DB!'
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
+  flyway:
+      validate-migration-naming: true
+      enabled: true
 
 logging:
   level:

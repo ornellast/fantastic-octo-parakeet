@@ -11,6 +11,7 @@ function execute_commands() {
     psql -U admin -c "CREATE SCHEMA ${SCHEMA}" -d $DATABASE_NAME
     psql -U admin -c "GRANT ALL PRIVILEGES ON DATABASE ${DATABASE_NAME} TO ${USERNAME}"
     psql -U admin -c "GRANT ALL ON SCHEMA ${SCHEMA} TO ${USERNAME}" -d $DATABASE_NAME
+    psql -U admin -c "GRANT CREATE ON SCHEMA public TO ${USERNAME}" -d $DATABASE_NAME
 }
 
 execute_commands "product-catalog-data.sh"

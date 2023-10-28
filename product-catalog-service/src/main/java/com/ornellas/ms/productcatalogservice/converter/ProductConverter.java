@@ -8,7 +8,6 @@ import com.ornellas.ms.productcatalogservice.service.operation.Search;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.val;
 
-import java.util.HashSet;
 import java.util.UUID;
 
 public class ProductConverter {
@@ -17,26 +16,30 @@ public class ProductConverter {
     }
 
     public static Product from(ExternalProduct external, Search<Ingredient, UUID> ingredientSearch) {
-        val product = new Product(null, external.name(), external.type(), null);
+        val product = new Product(
+            null,
+            external.name(),
+            external.type(),
+            external.amount(),
+            external.unit(),
+            null);
 
         if (external.ingredients() == null || external.ingredients().isEmpty()) {
             return product;
         }
 
-        val productIngredients = new HashSet<ProductIngredient>();
-
         for (val externalProductIngredient : external.ingredients()) {
             val ingredient = ingredientSearch.findById(externalProductIngredient.ingredientId());
-            productIngredients.add(
+            product.addIngredient(
                 new ProductIngredient(
                     null,
-                    product,
+                    null,
                     ingredient.orElseThrow(EntityNotFoundException::new),
                     externalProductIngredient.amount()
                 )
             );
         }
-        product.setProductIngredientList(productIngredients);
+
         return product;
     }
 
@@ -56,6 +59,8 @@ public class ProductConverter {
             product.getId(),
             product.getName(),
             product.getType(),
+            product.getAmount(),
+            product.getUnit(),
             ProductIngredientConverter.toExternalProductIngredient(product.getProductIngredientList()),
             product.getCreatedAt(),
             product.getUpdatedAt()

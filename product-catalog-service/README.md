@@ -5,14 +5,15 @@ erDiagram
   ingredient {
     uuid id PK
     string name
-    string unit
+    string unit "G, L"
     number calories_per_unit
   }
   product {
     uuid id PK
     string name
-    string type_id "FOOD, BEVERAGE, DESERT"
-    number version
+    string type "FOOD, BEVERAGE, DESERT"
+    number amount
+    string unit "G, L"
   }
   product_ingredient {
     uuid product_id PK,FK
